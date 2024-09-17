@@ -4,7 +4,9 @@ import org.carlos.bootcamp.restdemo.model.Empleado;
 import org.carlos.bootcamp.restdemo.repository.EmpleadoRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,8 +36,15 @@ public class EmpleadoController {
     }
 
     @PostMapping("/empleados")
-    public Empleado createEmpleado(@RequestBody Empleado empleado){
-        return repository.save(empleado);
+    public ResponseEntity<Empleado> createEmpleado(@RequestBody Empleado nuevoEmpleado,
+                                                   UriComponentsBuilder ucb){
+        Empleado empleadoGuardado = repository.save(nuevoEmpleado);
+        URI uriEmpleado = ucb
+                .path("empleados/{id}")
+                .buildAndExpand(empleadoGuardado.getId())
+                .toUri();
+        return ResponseEntity.created(uriEmpleado).build();
+        //return repository.save(empleado);
     }
 
     @PutMapping("/empleados/{id}")
