@@ -48,16 +48,27 @@ public class EmpleadoController {
     }
 
     @PutMapping("/empleados/{id}")
-    public Empleado updateEmpleado(@RequestBody Empleado empleadoActualizado,
+    public ResponseEntity<?> updateEmpleado(@RequestBody Empleado empleadoActualizado,
                                    @PathVariable Long id){
-        return repository.findById(id)
+        return ResponseEntity.ok(repository.findById(id)
                 .map(empleado -> {
+                    empleado.setNombre(empleadoActualizado.getNombre());
+                    empleado.setPuesto(empleadoActualizado.getPuesto());
+                    repository.save(empleado);
+                    return ResponseEntity.noContent().build();
+                }).orElseGet(() -> {
+                    repository.save(empleadoActualizado);
+                    return ResponseEntity.ok(empleadoActualizado);
+                }));
+        /* Anterior implementación con public Empleado updateEmpleado()
+            return repository.findById(id)
+                   .map(empleado -> {
                     empleado.setNombre(empleadoActualizado.getNombre());
                     empleado.setPuesto(empleadoActualizado.getPuesto());
                     return repository.save(empleado);
                 }).orElseGet(() ->{
                     return repository.save(empleadoActualizado);
-                });
+                });*/
     }
 
     @DeleteMapping("/empleados/{id}")
