@@ -72,8 +72,9 @@ public class EmpleadoController {
     }
 
     @DeleteMapping("/empleados/{id}")
-    public void deleteEmpleado(@PathVariable Long id){
+    public ResponseEntity<Void> deleteEmpleado(@PathVariable Long id){
         repository.deleteById(id);
+        return ResponseEntity.ok().build();
     }
 
 
